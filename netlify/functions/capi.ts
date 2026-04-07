@@ -1,3 +1,24 @@
+const PIXEL_ID = process.env.META_PIXEL_ID;
+const ACCESS_TOKEN = process.env.META_CAPI_TOKEN;
+const WEBHOOK_SECRET = process.env.CAKTO_WEBHOOK_SECRET;
+
+async function sendToMeta(payload: object) {
+  const res = await fetch(
+    `https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }
+  );
+  return res;
+}
+
+function hashSHA256(value: string): string {
+  // Retorna o valor em lowercase/trim — hashing real requer crypto API
+  return value.toLowerCase().trim();
+}
+
 export default async (request: Request) => {
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
@@ -10,9 +31,54 @@ export default async (request: Request) => {
     return new Response("Invalid JSON", { status: 400 });
   }
 
-  const PIXEL_ID = process.env.META_PIXEL_ID;
-  const ACCESS_TOKEN = process.env.META_CAPI_TOKEN;
+  // Webhook da Cakto (Purchase)
+  if (body.event === "purchase_approved") {
+    if (WEBHOOK_SECRET && body.secret !== WEBHOOK_SECRET) {
+      return new Response("Unauthorized", { status: 401 });
+    }
 
+    const data = body.data as Record<string, unknown>;
+    const customer = data.customer as Record<string, string>;
+    const amount = data.amount as number;
+    const fbc = data.fbc as string | null;
+    const fbp = data.fbp as string | null;
+
+    const eventId = `purchase-${data.id}`;
+
+    const payload = {
+      data: [
+        {
+          event_name: "Purchase",
+          event_time: Math.floor(Date.now() / 1000),
+          event_id: eventId,
+          action_source: "website",
+          user_data: {
+            em: hashSHA256(customer.email || ""),
+            ph: hashSHA256((customer.phone || "").replace(/\D/g, "")),
+            fbc: fbc ?? undefined,
+            fbp: fbp ?? undefined,
+          },
+          custom_data: {
+            value: amount / 100,
+            currency: "BRL",
+          },
+        },
+      ],
+    };
+
+    try {
+      const res = await sendToMeta(payload);
+      const result = await res.json();
+      return new Response(JSON.stringify(result), {
+        status: res.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch {
+      return new Response("Internal Server Error", { status: 500 });
+    }
+  }
+
+  // Eventos do frontend (ViewContent, InitiateCheckout)
   const { eventName, eventId, sourceUrl, userData = {}, customData = {} } = body as {
     eventName: string;
     eventId: string;
@@ -32,8 +98,8 @@ export default async (request: Request) => {
         user_data: {
           client_ip_address: request.headers.get("x-forwarded-for")?.split(",")[0],
           client_user_agent: request.headers.get("user-agent"),
-          fbc: (userData as Record<string, string>).fbc,
-          fbp: (userData as Record<string, string>).fbp,
+          fbc: userData.fbc,
+          fbp: userData.fbp,
         },
         custom_data: customData,
       },
@@ -41,15 +107,7 @@ export default async (request: Request) => {
   };
 
   try {
-    const res = await fetch(
-      `https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
-
+    const res = await sendToMeta(payload);
     const data = await res.json();
     return new Response(JSON.stringify(data), {
       status: res.status,
