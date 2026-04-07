@@ -890,7 +890,7 @@ const Index = () => {
                 R$ 47,90
               </p>
               <p className="text-xl sm:text-2xl font-semibold mt-2">
-                * 5x de R$ 9,58 *
+                * ou 10x de R$ 5,81 *
               </p>
             </div>
 
