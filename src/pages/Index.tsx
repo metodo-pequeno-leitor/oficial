@@ -17,7 +17,6 @@ import bonus3 from "@/assets/bonus3.jpg";
 import bonus4 from "@/assets/bonus4.jpg";
 import bonus5 from "@/assets/bonus5.jpg";
 import bonus6 from "@/assets/bonus6.jpg";
-import depoimento from "@/assets/depoimento.jpg";
 
 const CTAButton = ({
   children,
@@ -626,6 +625,11 @@ const Index = () => {
                   name: "Professora Fernanda", 
                   role: "Educadora há 15 anos", 
                   text: '"Uso o material como complemento em sala de aula e os resultados aparecem rápido. As crianças desenvolvem coordenação e consciência fonológica com muito mais facilidade. Recomendo!"' 
+                },
+                { 
+                  name: "Flávia Fonseca", 
+                  role: "Mãe da Carla, 5 anos", 
+                  text: '"Minha filha evoluiu muito em pouco tempo. Hoje ela se sente mais confiante, gosta das atividades e já demonstra muito mais interesse para aprender."' 
                 }
               ].map(({ name, role, text }, i) => (
                 <div key={i} className="testimonial-card">
@@ -656,14 +660,6 @@ const Index = () => {
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* IMAGEM DE PROVA REAL */}
-            <div className="mt-6">
-              <p className="text-xl sm:text-2xl font-bold text-center mb-8">
-                Veja o relato da Juliana:
-              </p>
-              <img src="/src/assets/depoimento.jpg" alt="Depoimento real de cliente" className="w-full rounded-2xl shadow-lg"/>
             </div>
           </div>
         </div>
