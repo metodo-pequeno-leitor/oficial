@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { trackViewContent } from "@/lib/pixel";
 import RetentionHero from "@/components/br1/RetentionHero";
 import PricingCard from "@/components/br1/PricingCard";
 import VideoBlock from "@/components/br1/VideoBlock";
@@ -12,6 +13,8 @@ import StickyCTA from "@/components/br1/StickyCTA";
 
 const Oferta = () => {
   useEffect(() => {
+    trackViewContent();
+
     // Back redirect: se o usuário clicar em "voltar", vai para /ultima-chance
     window.history.pushState({ page: "oferta" }, "", window.location.href);
 

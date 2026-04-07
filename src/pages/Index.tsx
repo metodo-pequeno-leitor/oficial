@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { trackViewContent, trackInitiateCheckout } from "@/lib/pixel";
 import { 
   CheckCircle, ArrowDown, Frown, TrendingDown, HeartCrack, ChevronDown, ChevronsDown,
   AlertTriangle, Star, CheckSquare, BookOpen, Footprints, Brain,
@@ -16,6 +17,7 @@ import bonus3 from "@/assets/bonus3.jpg";
 import bonus4 from "@/assets/bonus4.jpg";
 import bonus5 from "@/assets/bonus5.jpg";
 import bonus6 from "@/assets/bonus6.jpg";
+import depo1 from "@/assets/depoimento.jpg";
 
 const CTAButton = ({
   children,
@@ -226,7 +228,14 @@ const Index = () => {
   const checkoutLink = "https://pay.cakto.com.br/ky7hop9";
   const backRedirectLink = "/oferta";
 
+  const handleCheckout = () => {
+    trackInitiateCheckout(97);
+    window.location.href = checkoutLink;
+  };
+
   useEffect(() => {
+    trackViewContent();
+
     window.history.pushState({ page: "landing" }, "", window.location.href);
 
     const handlePopState = () => {
@@ -280,7 +289,7 @@ const Index = () => {
         <div className="section-container">
           <CTAButton
             className="bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => window.location.href = checkoutLink}
+            onClick={handleCheckout}
           >
             Quero meu pequeno lendo rápido!
           </CTAButton>
@@ -486,7 +495,7 @@ const Index = () => {
 
           <CTAButton
             className="bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => window.location.href = checkoutLink}
+            onClick={handleCheckout}
           >
             Quero meu filho(a) Lendo!
           </CTAButton>
@@ -648,6 +657,15 @@ const Index = () => {
                 </div>
               ))}
             </div>
+
+            {/* IMAGEM DE PROVA REAL */}
+            <div className="mt-6">
+              <p className="text-xl sm:text-2xl font-bold text-center mb-8">
+                Veja o relato da Juliana:
+              </p>
+              <img src="/src/assets/depoimento.jpg" alt="Depoimento real de cliente" className="w-full rounded-2xl shadow-lg"/>
+            </div>
+
           </div>
         </div>
       </section>
@@ -657,7 +675,7 @@ const Index = () => {
         <div className="section-container">
           <CTAButton
             className="bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => window.location.href = checkoutLink}
+            onClick={handleCheckout}
           >
             Quero meu pequeno lendo rápido!
           </CTAButton>
@@ -798,7 +816,7 @@ const Index = () => {
             ))}
           </div>
 
-          <CTAButton onClick={() => window.location.href = checkoutLink}>
+          <CTAButton onClick={handleCheckout}>
             SIM, QUERO TODOS OS BÔNUS!
           </CTAButton>
 
@@ -892,7 +910,7 @@ const Index = () => {
             <div className="mb-5">
               <button
                 type="button"
-                onClick={() => window.location.href = checkoutLink}
+                onClick={handleCheckout}
                 className="w-full bg-green-500 hover:bg-green-600 text-white text-lg sm:text-xl font-bold py-4 px-6 rounded-full shadow-lg transition-all duration-200"
               >
                 QUERO GARANTIR O MÉTODO AGORA!
@@ -932,3 +950,6 @@ const Index = () => {
 };
 
 export default Index;
+
+
+
