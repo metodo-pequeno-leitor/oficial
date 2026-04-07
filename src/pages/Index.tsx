@@ -16,7 +16,6 @@ import bonus3 from "@/assets/bonus3.jpg";
 import bonus4 from "@/assets/bonus4.jpg";
 import bonus5 from "@/assets/bonus5.jpg";
 import bonus6 from "@/assets/bonus6.jpg";
-import depo1 from "@/assets/depo1.jpg";
 
 const CTAButton = ({
   children,
@@ -649,20 +648,6 @@ const Index = () => {
                 </div>
               ))}
             </div>
-
-            {/* IMAGEM DE PROVA REAL */}
-            <div className="mt-6">
-              <p className="text-xl sm:text-2xl font-bold text-center mb-8">
-                Veja o relato da Juliana:
-              </p>
-
-              <img
-                src="/src/assets/depo1.jpg"
-                alt="Depoimento real de cliente"
-                className="w-full rounded-2xl shadow-lg"
-              />
-            </div>
-
           </div>
         </div>
       </section>
