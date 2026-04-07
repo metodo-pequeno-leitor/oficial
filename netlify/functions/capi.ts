@@ -1,19 +1,17 @@
-import type { Handler, HandlerEvent } from "@netlify/functions";
-
-const PIXEL_ID = process.env.META_PIXEL_ID;
-const ACCESS_TOKEN = process.env.META_CAPI_TOKEN;
-
-const handler: Handler = async (event: HandlerEvent) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+export default async (request: Request) => {
+  if (request.method !== "POST") {
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   let body: Record<string, unknown>;
   try {
-    body = JSON.parse(event.body || "{}");
+    body = await request.json();
   } catch {
-    return { statusCode: 400, body: "Invalid JSON" };
+    return new Response("Invalid JSON", { status: 400 });
   }
+
+  const PIXEL_ID = process.env.META_PIXEL_ID;
+  const ACCESS_TOKEN = process.env.META_CAPI_TOKEN;
 
   const { eventName, eventId, sourceUrl, userData = {}, customData = {} } = body as {
     eventName: string;
@@ -32,12 +30,10 @@ const handler: Handler = async (event: HandlerEvent) => {
         event_source_url: sourceUrl,
         action_source: "website",
         user_data: {
-          client_ip_address: event.headers["x-forwarded-for"]?.split(",")[0] || event.headers["client-ip"],
-          client_user_agent: event.headers["user-agent"],
-          fbc: userData.fbc,
-          fbp: userData.fbp,
-          em: userData.em,
-          ph: userData.ph,
+          client_ip_address: request.headers.get("x-forwarded-for")?.split(",")[0],
+          client_user_agent: request.headers.get("user-agent"),
+          fbc: (userData as Record<string, string>).fbc,
+          fbp: (userData as Record<string, string>).fbp,
         },
         custom_data: customData,
       },
@@ -55,13 +51,13 @@ const handler: Handler = async (event: HandlerEvent) => {
     );
 
     const data = await res.json();
-    return {
-      statusCode: res.status,
-      body: JSON.stringify(data),
-    };
-  } catch (err) {
-    return { statusCode: 500, body: "Internal Server Error" };
+    return new Response(JSON.stringify(data), {
+      status: res.status,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch {
+    return new Response("Internal Server Error", { status: 500 });
   }
 };
 
-export { handler };
+export const config = { path: "/api/capi" };
