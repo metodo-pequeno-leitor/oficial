@@ -28,7 +28,7 @@ async function sendCapi(params: {
   customData?: Record<string, unknown>;
 }) {
   try {
-    await fetch("/.netlify/functions/capi", {
+    await fetch("/api/capi", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
