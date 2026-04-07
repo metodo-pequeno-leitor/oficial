@@ -17,7 +17,7 @@ import bonus3 from "@/assets/bonus3.jpg";
 import bonus4 from "@/assets/bonus4.jpg";
 import bonus5 from "@/assets/bonus5.jpg";
 import bonus6 from "@/assets/bonus6.jpg";
-import depo1 from "@/assets/depoimento.jpg";
+import depoimento from "@/assets/depoimento.jpg";
 
 const CTAButton = ({
   children,
@@ -665,7 +665,6 @@ const Index = () => {
               </p>
               <img src="/src/assets/depoimento.jpg" alt="Depoimento real de cliente" className="w-full rounded-2xl shadow-lg"/>
             </div>
-
           </div>
         </div>
       </section>
