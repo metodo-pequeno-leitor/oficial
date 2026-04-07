@@ -1,4 +1,6 @@
 import { Check, Shield } from "lucide-react";
+import { useEffect } from "react";
+import { trackViewContent, trackInitiateCheckout } from "@/lib/pixel";
 
 const benefits = [
   "Aprendizado leve e sem pressão",
@@ -15,6 +17,15 @@ const bonuses = [
 ];
 
 export default function BackRedirectPage() {
+  useEffect(() => {
+    trackViewContent();
+  }, []);
+
+  const handleCheckout = () => {
+    trackInitiateCheckout(24.9);
+    window.location.href = CHECKOUT_URL;
+  };
+
   return (
     <div className="min-h-svh bg-background flex flex-col items-center p-4 text-foreground">
       {/* Urgency Header */}
@@ -89,7 +100,7 @@ export default function BackRedirectPage() {
 
         {/* CTA */}
         <button
-          onClick={() => (window.location.href = CHECKOUT_URL)}
+          onClick={handleCheckout}
           className="w-full bg-success hover:bg-success-dark text-primary-foreground font-black text-xl py-5 rounded-2xl shadow-cta active:shadow-none active:translate-y-1 transition-all animate-pulse-cta cursor-pointer"
         >
           QUERO GARANTIR AGORA
