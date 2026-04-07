@@ -1,9 +1,14 @@
 import { motion } from "framer-motion";
 import { ShieldCheck, Zap } from "lucide-react";
+import { trackInitiateCheckout } from "@/lib/pixel";
 
 const CTA_URL = "https://pay.cakto.com.br/34tozsu";
 
 const PricingCard = () => {
+  const handleCheckout = () => {
+    trackInitiateCheckout(34.9);
+    window.location.href = CTA_URL;
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -33,12 +38,13 @@ const PricingCard = () => {
         </span>
       </div>
 
-      <a
-        href={CTA_URL}
+      <button
+        type="button"
+        onClick={handleCheckout}
         className="block w-full py-5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl font-bold text-xl shadow-lg transition-all active:scale-95 hover:scale-[1.02] hover:shadow-elevated text-center"
       >
         QUERO APROVEITAR AGORA →
-      </a>
+      </button>
 
       <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
