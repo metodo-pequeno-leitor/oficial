@@ -14,9 +14,12 @@ async function sendToMeta(payload: object) {
   return res;
 }
 
-function hashSHA256(value: string): string {
-  // Retorna o valor em lowercase/trim — hashing real requer crypto API
-  return value.toLowerCase().trim();
+async function hashSHA256(value: string): Promise<string> {
+  const normalized = value.toLowerCase().trim();
+  const encoded = new TextEncoder().encode(normalized);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export default async (request: Request) => {
@@ -53,13 +56,13 @@ export default async (request: Request) => {
           event_id: eventId,
           action_source: "website",
           user_data: {
-            em: hashSHA256(customer.email || ""),
-            ph: hashSHA256((customer.phone || "").replace(/\D/g, "")),
+            em: await hashSHA256(customer.email || ""),
+            ph: await hashSHA256((customer.phone || "").replace(/\D/g, "")),
             fbc: fbc ?? undefined,
             fbp: fbp ?? undefined,
           },
           custom_data: {
-            value: amount / 100,
+            value: amount,
             currency: "BRL",
           },
         },
